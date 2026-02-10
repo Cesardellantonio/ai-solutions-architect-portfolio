@@ -1,37 +1,72 @@
-# Project 1: Basic ML Pipeline
+# Project 1: ML Pipeline — Iris Classifier
 
-A classification pipeline demonstrating data ingestion, model training, evaluation, and bias detection — applied to a SaaS churn prediction scenario.
+A complete 8-step ML pipeline demonstrating the full arc from raw data to explainable predictions. Built from the Solutions Architect perspective — focused on pipeline architecture, data quality, and explainability rather than model tuning.
 
 ## Architecture
 
 ```
-[Data Source] → [Data Ingestion] → [Preprocessing] → [Model Training] → [Evaluation] → [Bias Detection]
-     │                                                       │                              │
-  UCI Iris /                                          scikit-learn                    Fairness metrics
-  custom dataset                                      classifier                     & ethical checks
+┌────────────┐   ┌────────────┐   ┌────────────┐
+│ 1. LOAD    │──→│ 2. EXPLORE │──→│ 3. SPLIT   │
+│ 150 rows   │   │ Visualize  │   │ 80/20      │
+│ 4 features │   │ Understand │   │ Train/Test │
+└────────────┘   └────────────┘   └─────┬──────┘
+                                        │
+                            ┌───────────┴───────────┐
+                            ▼                       ▼
+                  ┌────────────┐           ┌────────────┐
+                  │ 4. SCALE   │           │  (Held out │
+                  │ Normalize  │           │   for test)│
+                  └─────┬──────┘           └─────┬──────┘
+                        ▼                        │
+                  ┌────────────┐                 │
+                  │ 5. TRAIN   │                 │
+                  │ 100 trees  │                 │
+                  └─────┬──────┘                 │
+                        ▼                        ▼
+                  ┌────────────┐           ┌────────────┐
+                  │ 6. PREDICT │──────────→│ 7. EVALUATE│
+                  └────────────┘           └─────┬──────┘
+                                                 ▼
+                                          ┌────────────┐
+                                          │ 8. EXPLAIN │
+                                          └────────────┘
 ```
 
-> Full architecture diagram: `diagrams/pipeline-architecture.png`
+## Results
 
-## Business Value
+- **Model:** Random Forest (100 trees)
+- **Accuracy:** 100% on test set (30 samples)
+- **Top Feature:** Petal length (44% importance)
+- **Key Insight:** Petal measurements drive 86% of predictions; sepal width contributes only 3%
 
-**Scenario:** SaaS company predicting customer churn to reduce revenue loss. This pipeline demonstrates how an ML solution architect designs the data flow from raw customer data to actionable predictions, with built-in ethical safeguards.
+## Key SA Concepts Demonstrated
 
-## Setup
+- **Data leakage prevention** — fit_transform on train only, transform on test
+- **Train/test split** — model never sees evaluation data during training
+- **Feature importance** — explainability layer for stakeholder communication
+- **Confusion matrix** — understanding *where* the model fails, not just *how often*
+- **Pipeline architecture** — the model is one step; most value is in everything around it
+
+## Run It
 
 ```bash
-# Open in Google Colab or run locally
 pip install -r requirements.txt
-python pipeline.py
+python run_pipeline.py
 ```
 
-## Key Concepts
+Charts are saved as PNG files in this directory.
 
-- ML pipeline architecture (ETL → Train → Evaluate)
-- Classification algorithms (decision trees, random forests)
-- Bias detection and ethical AI checks
-- Data flow diagramming for stakeholder communication
+## Files
+
+| File | Purpose |
+|------|---------|
+| `run_pipeline.py` | Complete pipeline script (terminal-friendly) |
+| `project-1-ml-pipeline.ipynb` | Jupyter notebook version |
+| `requirements.txt` | Python dependencies |
+| `chart_1_feature_distributions.png` | Feature exploration visualization |
+| `chart_2_confusion_matrix.png` | Model evaluation heatmap |
+| `chart_3_feature_importance.png` | Explainability chart |
 
 ## Status
 
-🔲 In Progress
+✅ Complete — Day 1, Session 2
